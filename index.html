@@ -941,28 +941,47 @@
   })();
 
   /* Contact form: checks the fields. Messages are not delivered yet because the page has no mail service connected. */
-  (function () {
-    var form = document.getElementById("contact-form");
-    var status = document.getElementById("form-status");
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var name = document.getElementById("f-name").value.trim();
-      var email = document.getElementById("f-email").value.trim();
-      var msg = document.getElementById("f-message").value.trim();
-      status.className = "";
-      if (!name || !email || !msg) {
+  /* Contact form: checks the fields, then sends the message through Formspree. */
+(function () {
+  var form = document.getElementById("contact-form");
+  var status = document.getElementById("form-status");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("f-name").value.trim();
+    var email = document.getElementById("f-email").value.trim();
+    var msg = document.getElementById("f-message").value.trim();
+    status.className = "";
+    if (!name || !email || !msg) {
+      status.className = "error";
+      status.textContent = "Please fill in your name, your email, and a message.";
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.className = "error";
+      status.textContent = "That email address looks incomplete. Check it and try again.";
+      return;
+    }
+    status.textContent = "Sending...";
+    fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { Accept: "application/json" }
+    })
+    .then(function (r) {
+      if (r.ok) {
+        status.textContent = "Thanks! Your message was sent.";
+        form.reset();
+      } else {
         status.className = "error";
-        status.textContent = "Please fill in your name, your email, and a message.";
-        return;
+        status.textContent = "Something went wrong. Please email me at skycreated@hotmail.com.";
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        status.className = "error";
-        status.textContent = "That email address looks incomplete. Check it and try again.";
-        return;
-      }
-      status.textContent = "Form check passed. This preview page cannot deliver messages yet, so please use the email address on the left.";
+    })
+    .catch(function () {
+      status.className = "error";
+      status.textContent = "Could not send. Please email me at skycreated@hotmail.com.";
     });
-  })();
+  });
+})();
 </script>
 
 </body></html>
