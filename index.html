@@ -1,0 +1,949 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Portfolio Starter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one left-aligned column laid out like a repo README. Nav, home, about, skills, projects, resume, contact. */
+  :root {
+    --bg: #000000;
+    --surface: #0A0D1F;
+    --fg: #FFFFFF;
+    --muted: #9FB0C8;
+    --line: #1A2757;
+    --accent: #00F5E1;
+    --accent-fg: #000000;
+    --pink: #FF00AA;
+    --pink-glow: rgba(255, 0, 170, 0.45);
+    --blue: #1F4BFF;
+    color-scheme: dark;
+
+    --font-display: "Roboto Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  /* This design commits to one dark look, so there is no light variant. */
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    padding-block: 0 72px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 72px; }
+  section { scroll-margin-top: 24px; min-width: 0; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+  }
+
+  .mono { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.02em; }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.2rem; margin: 0 0 6px; }
+  p { margin: 0 0 14px; max-width: 62ch; }
+  .muted { color: var(--muted); }
+
+  /* Nav */
+  .nav { display: flex; flex-wrap: wrap; gap: 12px; }
+  .nav a {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--pink);
+    color: #000000;
+    text-decoration: none;
+    padding: 10px 16px;
+    border: 1px solid var(--pink);
+    border-radius: 3px;
+    box-shadow: 0 0 14px var(--pink-glow);
+  }
+  .nav a:hover { background: var(--fg); border-color: var(--fg); box-shadow: 0 0 20px var(--pink-glow); }
+
+  /* Home */
+  /* Hero spans the full browser width. Menu top left, greeting and intro on the right over the photo. */
+  .top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 20px;
+    position: relative;
+    isolation: isolate;
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    min-height: clamp(560px, 80vw, 1000px);
+    padding-block: 28px 56px;
+    padding-left: max(24px, env(safe-area-inset-left, 0px));
+    padding-right: max(24px, env(safe-area-inset-right, 0px));
+    background-color: var(--bg);
+    background-image: url("images/hero-bg.jpg");
+    background-size: cover;
+    background-position: center 30%;
+  }
+  /* No fade over the photo, so a soft dark shadow behind the text keeps it readable. */
+  .top h1, .top p { text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9); }
+  /* Menu runs down the left side of the photo. On phones it goes back to a row across the top so it does not crowd the text. */
+  .top .nav {
+    position: absolute;
+    top: calc(28px + var(--hero-drop));
+    left: max(24px, env(safe-area-inset-left, 0px));
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    z-index: 1;
+  }
+  @media (max-width: 640px) {
+    .top .nav { position: static; flex-direction: row; flex-wrap: wrap; align-self: flex-start; }
+  }
+  .top { --hero-drop: clamp(160px, 28vw, 400px); }
+  .top h1 { margin-top: var(--hero-drop); }
+  .top .intro { color: var(--accent); font-size: 1.15rem; max-width: 34rem; margin: 0; }
+  .top .links { justify-content: flex-end; }
+  html, body { overflow-x: clip; }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 10vw, 4.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  /* Greeting: typewriter. The full text is visible by default. A small script (below) hides the letters,
+     then reveals them one at a time and moves a single pink cursor along behind the newest letter. */
+  h1 .word { display: inline-block; white-space: nowrap; }
+  h1 .accent { color: var(--pink); }
+  h1.typing .ch { visibility: hidden; }
+  h1.typing .ch.on { visibility: visible; }
+  h1 .cursor {
+    display: inline-block;
+    width: 0.06em;
+    height: 0.78em;
+    margin-left: 0.04em;
+    background: var(--pink);
+    vertical-align: baseline;
+  }
+  h1 .cursor.blink { animation: cursor-blink 1s steps(1) infinite; }
+  @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  .role { font-size: 1.3rem; color: var(--muted); margin: 0; text-wrap: balance; }
+  .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+  .btn {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 10px 16px;
+    border: 1px solid var(--fg);
+    background: none;
+    color: var(--fg);
+    text-decoration: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .btn.primary { background: var(--pink); border-color: var(--pink); color: #000000; box-shadow: 0 0 14px var(--pink-glow); }
+  .btn:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  .note {
+    border: 1px dashed var(--line);
+    background: var(--surface);
+    padding: 12px 16px;
+    border-radius: 3px;
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+    max-width: none;
+  }
+
+  /* About */
+  .about-grid { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .photo {
+    aspect-ratio: 4 / 5;
+    max-width: 100%;
+    border: 1px dashed var(--muted);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .photo b { display: block; font-family: var(--font-display); font-size: 3rem; color: var(--blue); font-weight: 700; line-height: 1; margin-bottom: 8px; }
+  .facts { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .facts li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .facts .k { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  .facts .v { min-width: 0; }
+
+  /* Skills */
+  .skill-block { margin-top: 28px; }
+  .skill-block > h3 { margin-bottom: 10px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .tag { font-family: var(--font-mono); font-size: 12px; background: var(--surface); padding: 3px 9px; border-radius: 3px; }
+  .tag.learning { background: transparent; border: 1px dashed var(--muted); color: var(--muted); }
+  .artifact {
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 14px 16px;
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .artifact + .artifact { margin-top: 12px; }
+  .artifact .kind { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .artifact p { margin: 0; font-size: 15px; color: var(--muted); }
+  .artifact strong { font-weight: 600; color: var(--fg); }
+  .certs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .certs li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .status {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 3px;
+    align-self: start;
+    white-space: nowrap;
+  }
+  .status.live { color: var(--accent); border-color: var(--accent); }
+
+  /* Projects */
+  .projects { display: flex; flex-direction: column; gap: 56px; }
+  .project { border-top: 1px solid var(--fg); padding-top: 18px; min-width: 0; }
+  .project-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+  .project-head h3 { font-size: 1.5rem; margin: 0; }
+  .project dl { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 14px 16px; margin: 16px 0 0; }
+  .project dt { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  .project dd { margin: 0; min-width: 0; }
+  .project dd p { margin: 0 0 10px; }
+  .project dd p:last-child { margin-bottom: 0; }
+  .shot {
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    border: 1px dashed var(--muted);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  /* Resume */
+  .resume-doc { border: 1px solid var(--line); background: var(--surface); padding: 28px; border-radius: 3px; display: flex; flex-direction: column; gap: 22px; }
+  .resume-doc h3 { font-size: 1.6rem; margin: 0; }
+  .resume-doc h4 { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  .resume-doc ul { margin: 0; padding-left: 1.1rem; }
+  .resume-doc li { margin-bottom: 4px; }
+  .resume-doc p { margin: 0 0 6px; max-width: none; }
+  .resume-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; }
+  .resume-row b { font-weight: 600; }
+  .resume-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .resume-tools .mono { color: var(--muted); }
+
+  /* Contact */
+  .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; }
+  .contact dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+  .contact dt { color: var(--muted); }
+  .contact dd { margin: 0; overflow-wrap: anywhere; }
+  .copy {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--fg);
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .copy:hover { border-color: var(--fg); }
+  form { display: flex; flex-direction: column; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  input[type="text"], input[type="email"], textarea {
+    font: inherit;
+    font-size: 16px;
+    color: var(--fg);
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    border-radius: 3px;
+    padding: 10px 12px;
+    width: 100%;
+  }
+  textarea { min-height: 130px; resize: vertical; }
+  #form-status { margin: 0; font-size: 15px; min-height: 1.5em; }
+  #form-status.error { color: var(--pink); }
+  .portrait { display: block; width: 100%; max-width: 200px; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 3px; border: 1px solid var(--line); }
+  .gallery { list-style: none; margin: 0 0 14px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-width: 640px; }
+  .thumb { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 0; background: none; border: 0; color: var(--muted); cursor: zoom-in; text-align: left; font-family: var(--font-mono); font-size: 12px; }
+  .thumb img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 3px; }
+  .thumb:hover img { border-color: var(--accent); }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    padding-top: max(16px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .lightbox img { flex: 1 1 auto; min-height: 0; max-width: 100%; width: auto; height: auto; object-fit: contain; border-radius: 3px; cursor: zoom-out; }
+  .demo { display: block; width: 100%; max-width: 640px; height: auto; background: #000000; border: 1px solid var(--line); border-radius: 3px; margin-bottom: 8px; }
+  .demo.portrait { max-width: 240px; }
+  .demo.phone { max-width: 240px; }
+  .demo-caption { margin: 0 0 14px !important; max-width: 640px; }
+  .more { margin-top: 32px; justify-content: flex-start; }
+  .all-view { padding-top: 32px; }
+  .all-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .all-head .btn { margin-bottom: 20px; }
+  .all-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--fg); }
+  .mini { display: flex; flex-direction: column; gap: 10px; padding: 22px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+  .mini .project-head h3 { font-size: 1.25rem; }
+  .mini p { margin: 0; }
+  .mini .tag-row { margin: 0; }
+  .mini.empty { border: 1px dashed var(--muted); border-radius: 3px; padding: 18px; margin-top: 16px; color: var(--muted); background: var(--surface); }
+  .mini.empty h3 { margin: 0; }
+  .doc-cover { display: block; max-width: 260px; margin-bottom: 10px; }
+  .doc-cover img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 3px; }
+  .qr { margin: 24px 0 0; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .qr img { display: block; width: 100%; max-width: 110px; height: auto; border-radius: 12px; }
+  footer { color: var(--muted); }
+  .brand { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .brand-logo { display: block; width: 100%; max-width: 130px; height: auto; }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; padding-block: 24px 56px; }
+    .wrap { gap: 56px; }
+    .about-grid { grid-template-columns: minmax(0, 1fr); }
+    .photo { max-width: 200px; }
+    .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+    .facts li, .project dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .project dd { margin-bottom: 10px; }
+    .resume-doc { padding: 18px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn, .copy { transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+
+<div class="wrap" id="main-view">
+
+  <!-- HOME -->
+  <header class="top" id="home">
+    <nav class="nav" aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <h1 id="greeting" aria-label="Hi, I'm Sky!">
+      <span aria-hidden="true">
+        <span class="word"><span class="ch" style="--i:0">H</span><span class="ch" style="--i:1">i</span><span class="ch" style="--i:2">,</span></span>
+        <span class="word"><span class="ch" style="--i:3">I</span><span class="ch" style="--i:4">'</span><span class="ch" style="--i:5">m</span></span>
+        <span class="word accent"><span class="ch" style="--i:6">S</span><span class="ch" style="--i:7">k</span><span class="ch" style="--i:8">y</span><span class="ch last" style="--i:9">!</span></span>
+      </span>
+    </h1>
+    <p class="intro">I am a full-time Computer Systems and Technology Student. I am currently learning full-stack development and cyber security topics. I have a passion for information technology! I enjoy working with diverse teams and collaborating with innovative creators!</p>
+    <div class="links">
+      <a class="btn primary" href="#projects">See projects</a>
+      <a class="btn" href="#contact">Get in touch</a>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="label">About me</p>
+    <h2>My story</h2>
+    <div class="about-grid">
+      <img class="portrait" src="images/sky-photo.jpg" width="640" height="800" alt="Portrait of Sky smiling, standing in a school hallway with blue lockers">
+
+      <div>
+        <p>[Write your story in a short paragraph: what first got you interested in technology, what you are studying or doing now, and what you want to accomplish. Two or three honest sentences read better than a list of buzzwords.]</p>
+        <ul class="facts">
+          <li>
+            <span class="k">Background</span>
+            <span class="v">Computer Systems and Technology Diploma student at Saskatchewan Polytechnic (finishing June 2027). Earlier studies in biology and English at the University of Regina, plus several years of retail management and team leadership.</span>
+          </li>
+          <li>
+            <span class="k">Career goals</span>
+            <span class="v">[Example: Land an entry-level web developer or IT support role within a year, then grow into building full web applications.]</span>
+          </li>
+          <li>
+            <span class="k">What makes me unique</span>
+            <span class="v">[Example: I explain technical things in plain language, and I learn fastest by building something real and then writing about it.]</span>
+          </li>
+          <li>
+            <span class="k">Outside of code</span>
+            <span class="v">[Add two or three hobbies or interests, such as a sport, a kind of music, a game, or a craft.]</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS & CERTIFICATIONS -->
+  <section id="skills">
+    <p class="label">Skills &amp; certifications</p>
+    <h2>What I can do</h2>
+
+    <div class="skill-block">
+      <h3>Technical skills</h3>
+      <div class="tag-row">
+        <span class="tag">Java</span>
+        <span class="tag">SQL</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">HTML</span>
+        <span class="tag">CSS</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">C#</span>
+        <span class="tag">Git &amp; GitHub</span>
+        <span class="tag">IntelliJ IDEA</span>
+        <span class="tag">VS Code</span>
+        <span class="tag learning">Full-stack development</span>
+        <span class="tag learning">Cyber security</span>
+      </div>
+      <p class="muted mono">Solid lines = comfortable. Dashed = learning now.</p>
+      <div class="artifact">
+        <span class="kind">Artifact</span>
+        <p><strong>COSC183 DDCD project, Java and MySQL.</strong> <a href="https://github.com/skycreated/COSC183-DDCD" rel="noopener">View the repository.</a> Shows I can work with a team to build a program that stores data in a database.</p>
+      </div>
+      </div>
+
+    <div class="skill-block">
+      <h3>Soft skills</h3>
+      <div class="tag-row">
+        <span class="tag">Written &amp; oral communication</span>
+        <span class="tag">Problem-solving</span>
+        <span class="tag">Teamwork</span>
+        <span class="tag">Leadership</span>
+        <span class="tag">Attention to detail</span>
+      </div>
+      <div class="artifact">
+        <span class="kind">Artifact</span>
+        <p><strong>Communication, leadership and teamwork: Core Systems RFP Response.</strong> I led a team of four to produce this 57-page proposal, which won Best in Class and Best in Program for technical communications at Saskatchewan Polytechnic. <a href="docs/Core-Systems-RFP-Response.pdf" target="_blank" rel="noopener">Read the proposal</a> or <a href="https://github.com/skycreated/Mock-Proposal-Response-To-RFP" rel="noopener">see the repository</a>. Shows I can write clearly for a technical audience and lead a team.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="label">Projects</p>
+    <h2>Selected work</h2>
+    <p class="muted">Each project has a description, the technologies or skills I used, proof of the work, and what I learned.</p>
+
+    <div class="projects">
+
+      <article class="project">
+        <div class="project-head">
+          <h3>COSC183 DDCD Project</h3>
+          <span class="status live">team project</span>
+        </div>
+        <dl>
+          <dt>Description</dt>
+          <dd>A Java client/server program my team built for our Intermediate Programming class (COSC183). Several clients connect to one server, which stores tabletop role-playing characters in a MySQL database. Users can create a random character, view one, update it, or delete it.</dd>
+          <dt>Technologies</dt>
+          <dd><div class="tag-row"><span class="tag">Java</span><span class="tag">MySQL</span><span class="tag">IntelliJ IDEA</span><span class="tag">Git &amp; GitHub</span></div></dd>
+          <dt>Artifact</dt>
+          <dd>
+            <video class="demo" controls preload="metadata" playsinline width="1446" height="720" poster="media/ddcd-poster.jpg">
+              <source src="media/ddcd-demo.mp4" type="video/mp4">
+              Your browser cannot play this video.
+            </video>
+            <p class="muted mono demo-caption">Demo video, about 2 minutes: two clients connect to the server and create, view, update and delete characters, with the MySQL table shown alongside.</p>
+            <div class="artifact">
+              <span class="kind">GitHub repository</span>
+              <p><a href="https://github.com/skycreated/COSC183-DDCD" rel="noopener">github.com/skycreated/COSC183-DDCD</a><br>Java source code, the project proposal (PDF), and setup notes. 84 commits from a team of three.</p>
+            </div>
+          </dd>
+          <dt>My role &amp; challenges</dt>
+          <dd><p>I worked on this with two teammates. [Describe your part: which pieces of the code you wrote, and one problem you solved, such as connecting the program to the database.]</p></dd>
+          <dt>Reflection</dt>
+          <dd><p>The artifact is our team's GitHub repository, which holds the Java source code and the project proposal. [Add a sentence on what it shows about you, such as working in a team with version control and building something that stores data in a database.]</p></dd>
+        </dl>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <h3>Core Systems RFP Response</h3>
+          <span class="status live">team project · award winner</span>
+        </div>
+        <dl>
+          <dt>Description</dt>
+          <dd>A 57-page mock proposal, written as a response to a request for proposal (RFP 03-2026a) from a fictional company, BTB Heavy Equipment, for about 250 standard desktop computers due by June 2026. We chose and justified every component, costed the build at $234,082.50 against a $250,000 budget, and planned data backup, installation, and ethical disposal of the old machines.</dd>
+          <dt>Skills used</dt>
+          <dd><div class="tag-row"><span class="tag">Technical writing</span><span class="tag">Project management</span><span class="tag">Hardware selection</span><span class="tag">Budgeting</span></div></dd>
+          <dt>Artifact</dt>
+          <dd>
+            <a class="doc-cover" href="docs/Core-Systems-RFP-Response.pdf" target="_blank" rel="noopener"><img src="images/rfp-cover-02.jpg" width="680" height="880" alt="Cover page of the Core Systems RFP response, titled Driving Operational Efficiency: A Comprehensive Hardware Infrastructure Upgrade"></a>
+            <p class="muted mono"><a href="docs/Core-Systems-RFP-Response.pdf" target="_blank" rel="noopener">Read the full proposal (PDF, 57 pages)</a> · <a href="https://github.com/skycreated/Mock-Proposal-Response-To-RFP" rel="noopener">GitHub repository</a></p>
+            <p class="muted mono demo-caption">Selected pages (click to enlarge):</p>
+            <ul class="gallery">
+              <li><button type="button" class="thumb" data-full="images/rfp-page-17.jpg"><img src="images/rfp-page-17.jpg" width="680" height="865" alt="Page 17 of the proposal, the monitor section, with a diagram of the LCD panel layers, a product photo, and a specifications table checked against the client's requirements" loading="lazy"><span>Choosing a monitor</span></button></li>
+              <li><button type="button" class="thumb" data-full="images/rfp-page-19.jpg"><img src="images/rfp-page-19.jpg" width="677" height="851" alt="Page 19 of the proposal, the budget table, with per-unit and 250-unit costs for each component and a total of $234,082.50" loading="lazy"><span>The budget</span></button></li>
+              <li><button type="button" class="thumb" data-full="images/rfp-page-40.jpg"><img src="images/rfp-page-40.jpg" width="677" height="866" alt="Page 40 of the proposal, Appendix E on RAM considerations, with a bar chart comparing 2025 and 2026 RAM prices and a price table" loading="lazy"><span>RAM prices</span></button></li>
+            </ul>
+          </dd>
+          <dt>My role &amp; challenges</dt>
+          <dd>
+            <p>I was team lead for a team of four. I signed the transmittal email to the client and the memo on computer disposal and secure data backup (Appendix D). [Add which other sections you wrote or edited, and how you organized the team.]</p>
+            <p>One challenge the team solved: RAM prices had jumped, so we chose an 8GB module that met the requirements and a motherboard with dual-channel memory, so more RAM can be added later.</p>
+          </dd>
+          <dt>Reflection</dt>
+          <dd><p>The artifact is the finished proposal, which won Best in Class and Best in Program for technical communications. It shows I can lead a team, turn a client's requirements into a costed plan, and write for executives and technical staff in the same document. [Add how you created it, such as the tools you used and how the team reviewed each other's work.]</p></dd>
+        </dl>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <h3>How to Build: Lego Instructions Document</h3>
+          <span class="status live">team project</span>
+        </div>
+        <dl>
+          <dt>Description</dt>
+          <dd>An illustrated instruction manual for building a Lego structure: a base, a control tower with a landing pad, and a detachable ship. Our group of four wrote it for my Technical Communications class (TCOM190). It covers terms, materials, warnings, notes, and numbered build steps with a figure for each part.</dd>
+          <dt>Skills used</dt>
+          <dd><div class="tag-row"><span class="tag">Technical writing</span><span class="tag">Instructional design</span><span class="tag">Document design</span><span class="tag">Teamwork</span></div></dd>
+          <dt>Artifact</dt>
+          <dd>
+            <p class="muted mono demo-caption">Selected pages (click to enlarge). <a href="docs/How-to-Build-a-Lego-Structure.pdf" target="_blank" rel="noopener">Read the full instructions (PDF, 10 pages)</a>.</p>
+            <ul class="gallery">
+              <li><button type="button" class="thumb" data-full="images/lego-cover.jpg"><img src="images/lego-cover.jpg" width="681" height="862" alt="Cover page of the Lego instructions document, How to Build: A Base and Control Tower with Landing Pad and Detachable Ship, with photos of the finished Lego build" loading="lazy"><span>Cover</span></button></li>
+              <li><button type="button" class="thumb" data-full="images/lego-page-1.jpg"><img src="images/lego-page-1.jpg" width="677" height="865" alt="Page 1 of the instructions with a Before you begin sidebar showing a choking hazard warning, an example warning and note, and labelled piece diagrams, next to the introduction, terms and materials" loading="lazy"><span>Before you begin</span></button></li>
+              <li><button type="button" class="thumb" data-full="images/lego-page-9.jpg"><img src="images/lego-page-9.jpg" width="677" height="867" alt="Page 9 of the instructions with the last numbered build steps, a warning box, step figures, and the conclusion showing the finished build from three angles" loading="lazy"><span>Final steps</span></button></li>
+            </ul>
+            <div class="artifact">
+              <span class="kind">GitHub repository</span>
+              <p><a href="https://github.com/skycreated/Lego-Instructions-Document" rel="noopener">github.com/skycreated/Lego-Instructions-Document</a><br>The finished instruction manual and the assignment instructions, as PDFs.</p>
+            </div>
+          </dd>
+          <dt>My role &amp; challenges</dt>
+          <dd>
+            <p>I worked with a group of three teammates. [Add your part: which sections you wrote, drew, or laid out.]</p>
+            <p>The manual was built for a reader who has never seen the structure. It puts safety information in a "Before you begin" sidebar, marks warnings in yellow and notes in blue, and gives every build step a numbered figure.</p>
+          </dd>
+          <dt>Reflection</dt>
+          <dd><p>The artifact is the finished manual. It shows I can write clear, ordered instructions and pair each step with a figure so a reader can follow along. [Add how you created it, such as the tools you used and how the team tested the steps.]</p></dd>
+        </dl>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <h3>Number Muncher</h3>
+          <span class="status live">class assignment</span>
+        </div>
+        <dl>
+          <dt>Description</dt>
+          <dd>A JavaScript game built for my web application class (CWEB). The player moves a character around a grid to collect numbered balls, and the page keeps a running score and a list of the numbers collected, with a Restart button. My professor supplied the assets and instructions, and I wrote the JavaScript.</dd>
+          <dt>Technologies</dt>
+          <dd><div class="tag-row"><span class="tag">JavaScript</span><span class="tag">Git &amp; GitHub</span></div></dd>
+          <dt>Artifact</dt>
+          <dd>
+            <video class="demo" controls preload="metadata" playsinline width="910" height="720" poster="media/number-muncher-poster.jpg">
+              <source src="media/number-muncher-demo.mp4" type="video/mp4">
+              Your browser cannot play this video.
+            </video>
+            <p class="muted mono demo-caption">Demo video, about 40 seconds: the character collects numbers while the score and the list of numbers update.</p>
+            <div class="artifact">
+              <span class="kind">GitHub repository</span>
+              <p><a href="https://github.com/skycreated/Number-Muncher" rel="noopener">github.com/skycreated/Number-Muncher</a><br>The game's source code.</p>
+            </div>
+          </dd>
+          <dt>My role &amp; challenges</dt>
+          <dd><p>Class assignment. My professor supplied the assets and instructions, and I wrote the JavaScript. [Describe one problem you solved, such as how the game keeps score or tracks the character's position.]</p></dd>
+          <dt>Reflection</dt>
+          <dd><p>The video shows the game running. I made it to build my JavaScript skills and learn more about game mechanics and logic. It shows I can turn instructions and supplied assets into a working game. [Add what you would improve next.]</p></dd>
+        </dl>
+      </article>
+
+    </div>
+
+    <div class="links more">
+      <a class="btn primary" href="#all-projects">See all projects (7)</a>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume">
+    <p class="label">Resume</p>
+    <h2>Resume</h2>
+    <p class="muted">Tailored to technical writing, project management, and IT roles. No phone number, home address or references appear here.</p>
+    <div class="resume-tools">
+      <button class="btn" id="copy-resume" type="button">Copy resume as text</button>
+      <span class="mono" id="resume-status" aria-live="polite"></span>
+    </div>
+
+    <div class="resume-doc" id="resume-doc">
+      <div>
+        <h3>Skylar Magouliotis</h3>
+        <p class="muted">Technical Writer · Project Manager · IT Specialist · <a href="https://www.linkedin.com/in/skycreated" rel="noopener">linkedin.com/in/skycreated</a> · <a href="https://github.com/skycreated" rel="noopener">github.com/skycreated</a></p>
+      </div>
+
+      <div>
+        <h4>Summary</h4>
+        <p>Full-time Computer Systems and Technology student with a passion for problem solving and learning about technology and hardware. Learning full-stack development and cyber security.</p>
+        <p>I value a collaborative work environment where I can improve workplace culture, drive organizational success, adapt to change, and develop meaningful client relationships through healthy communication and productive workflows.</p>
+      </div>
+
+      <div>
+        <h4>Education</h4>
+        <div class="resume-row"><b>Computer Systems and Technology Diploma</b><span>Aug 2025 to present (June 2027)</span></div>
+        <p>Saskatchewan Polytechnic</p>
+        <ul>
+          <li>Consistently maintained a high academic standing, with a current GPA of 3.3.</li>
+          <li>Managed multiple projects at once in Application Development, Advanced Programming, Technical Communications, and Capstone, resulting in Best in Class and Best in Program awards.</li>
+          <li>Encourage peers to succeed by sharing study guides, booking study rooms, and joining clubs, which builds a positive class culture.</li>
+        </ul>
+        <p class="muted">Relevant coursework: Application Development, Advanced Programming, Technical Communications, Capstone</p>
+        <div class="resume-row"><b>Biology Major (incomplete), English Minor</b><span>2015 to 2019</span></div>
+        <p>University of Regina</p>
+        <p class="muted">Finished all classes required to complete the English minor.</p>
+        <div class="resume-row"><b>High School Diploma</b></div>
+        <p>Winston Knoll Collegiate, graduated with a 92% average.</p>
+      </div>
+
+      <div>
+        <h4>Skills</h4>
+        <p>Technical: SQL, HTML, CSS, JavaScript, Java, C#. Computer hardware and software, Word, PowerPoint, Excel, Teams. Accurate documentation, designs, and diagrams. Agile environments and workflows.</p>
+        <p>Professional: Written, oral, and listening skills. Attention to detail. Organized, reliable, and adaptable. Able to prioritize multiple tasks. Works well in team and independent settings.</p>
+      </div>
+
+      <div>
+        <h4>Projects</h4>
+        <ul>
+          <li><b>COSC183 DDCD project.</b> Built a Java and MySQL project with a team of three, practicing client/server design, CRUD operations, and database management.</li>
+          <li><b>Core Systems RFP response.</b> Led a team of four in writing a 57-page mock proposal for 250 standard desktop computers, with component research, a costed budget of $234,082.50, and plans for data backup and ethical disposal. Awarded Best in Class and Best in Program.</li>
+          <li><b>Lego instructions document.</b> Worked with a team of four on an illustrated instruction manual for building a Lego structure, with warnings, notes, and a figure for every build step.</li>
+          <li><b>Number Muncher.</b> Wrote the JavaScript for a grid-based number game for a web application class, using assets and instructions from the professor.</li>
+          </ul>
+      </div>
+
+      <div>
+        <h4>Work experience</h4>
+        <div class="resume-row"><b>Keylead, Farmer Jane Cannabis Co.</b><span>May 2023 to present</span></div>
+        <ul>
+          <li>Supervise and train a diverse team.</li>
+          <li>Perform inventory counts and audits, and receive and prepare shipments and transfers.</li>
+          <li>Write documentation (return forms, FAB statements, product knowledge) and weekly blog posts.</li>
+          <li>Explain warranty, policies, and procedures clearly to clients, and build strong client relationships.</li>
+          <li>Meet personal and team sales goals, and take part in volunteer work and fundraising.</li>
+        </ul>
+        <div class="resume-row"><b>Manager, Structube</b><span>July 2018 to Sept 2022</span></div>
+        <ul>
+          <li>Handled administrative operations, data entry, inventory counts, and supply orders.</li>
+          <li>Wrote documentation, including claims and policies and procedures.</li>
+          <li>Managed warehouse safety and procedure.</li>
+          <li>Met personal and team sales goals.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Awards</h4>
+        <ul>
+          <li>Best in Class and Best in Program, Technical Communications Proposal</li>
+          <li>Centennial Merit Scholarship</li>
+          <li>Entrance Scholarship</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Certifications</h4>
+        <ul>
+          <li>WHMIS</li>
+          <li>CannaSell</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <p class="label">Contact</p>
+    <h2>Let's talk</h2>
+    <div class="contact-grid">
+      <div>
+        <p class="muted">For job openings, freelance work, or questions about a project.</p>
+        <dl>
+          <dt>Email</dt>
+          <dd><span id="email-text">skycreated@hotmail.ca</span><button class="copy" id="copy-email" type="button">Copy</button></dd>
+          <dt>LinkedIn</dt>
+          <dd><a href="https://www.linkedin.com/in/skycreated" rel="noopener">linkedin.com/in/skycreated</a></dd>
+          <dt>GitHub</dt>
+          <dd><a href="https://github.com/skycreated" rel="noopener">github.com/skycreated</a></dd>
+          <dt>Instagram</dt>
+          <dd><a href="https://www.instagram.com/skycreated/" rel="noopener">@skycreated</a></dd>
+        </dl>
+      </div>
+
+      <form id="contact-form" novalidate>
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input type="text" id="f-name" name="name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="f-email">Your email</label>
+          <input type="email" id="f-email" name="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="f-message">Message</label>
+          <textarea id="f-message" name="message"></textarea>
+        </div>
+        <div><button class="btn primary" type="submit">Send message</button></div>
+        <p id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="brand">
+    <span class="mono">&copy; 2026 Sky Created. Built with HTML and CSS.</span>
+  </footer>
+</div>
+
+<div class="wrap all-view" id="all-view" hidden>
+  <header class="all-head">
+    <a class="btn" href="#home">&larr; Back to portfolio</a>
+    <p class="label">All projects</p>
+    <h2>Everything I have built</h2>
+    <p class="muted">Seven projects in total. The first four are written up in full on the main page. The Dice Game, the Calculator and Project Emmy LLM are listed here only.</p>
+  </header>
+
+  <ul class="all-list">
+      <li class="mini">
+        <div class="project-head"><h3>COSC183 DDCD Project</h3><span class="status live">team project</span></div>
+        <p>A Java client/server program that stores tabletop role-playing characters in a MySQL database. Users can create, view, update and delete characters.</p>
+        <div class="tag-row"><span class="tag">Java</span><span class="tag">MySQL</span><span class="tag">IntelliJ IDEA</span><span class="tag">Git &amp; GitHub</span></div>
+        <p class="muted mono"><a href="https://github.com/skycreated/COSC183-DDCD" rel="noopener">GitHub repository</a> · <a href="#projects">Write-up and demo video</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Core Systems RFP Response</h3><span class="status live">team project · award winner</span></div>
+        <p>A 57-page mock proposal answering a fictional company's request for 250 standard desktop computers. Won Best in Class and Best in Program for technical communications.</p>
+        <div class="tag-row"><span class="tag">Technical writing</span><span class="tag">Project management</span><span class="tag">Hardware selection</span><span class="tag">Budgeting</span></div>
+        <p class="muted mono"><a href="docs/Core-Systems-RFP-Response.pdf" target="_blank" rel="noopener">Proposal (PDF)</a> · <a href="https://github.com/skycreated/Mock-Proposal-Response-To-RFP" rel="noopener">GitHub repository</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Lego Instructions Document</h3><span class="status live">team project</span></div>
+        <p>An illustrated technical writing sample: step-by-step instructions for building a Lego structure, written with a team of four for my Technical Communications class.</p>
+        <div class="tag-row"><span class="tag">Technical writing</span><span class="tag">Documentation</span><span class="tag">Teamwork</span></div>
+        <p class="muted mono"><a href="docs/How-to-Build-a-Lego-Structure.pdf" target="_blank" rel="noopener">Instructions (PDF)</a> · <a href="https://github.com/skycreated/Lego-Instructions-Document" rel="noopener">GitHub repository</a> · <a href="#projects">Write-up and page previews</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Number Muncher</h3><span class="status live">class assignment</span></div>
+        <p>A JavaScript game built for my web application class (CWEB). The player moves a character around a grid to collect numbered balls while the score updates. My professor supplied the assets and instructions, and I wrote the JavaScript.</p>
+        <div class="tag-row"><span class="tag">JavaScript</span><span class="tag">Git &amp; GitHub</span></div>
+        <p class="muted mono"><a href="https://github.com/skycreated/Number-Muncher" rel="noopener">GitHub repository</a> · <a href="#projects">Write-up and demo video</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Dice Game</h3><span class="status live">solo project</span></div>
+        <p>The Amazing Dice Game, built in JavaScript for a class assignment. Click any of six dice to roll them and reach exactly 5000 points. Ones are worth 100, fives are worth 50, three of a kind is worth the number times 100 (three ones is worth 1000), and six ones wins automatically. The page shows your score, each roll, a list of rounds, and your wins and losses.</p>
+        <div class="tag-row"><span class="tag">JavaScript</span><span class="tag">Git &amp; GitHub</span></div>
+        <video class="demo" controls preload="metadata" playsinline width="1348" height="720" poster="media/dice-game-poster.jpg">
+          <source src="media/dice-game-demo.mp4" type="video/mp4">
+          Your browser cannot play this video.
+        </video>
+        <p class="muted mono demo-caption">Demo video, about 30 seconds: rolling the dice, the running score, and the list of rounds.</p>
+        <p class="muted mono"><a href="https://github.com/skycreated/Dice-Game" rel="noopener">GitHub repository</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Calculator</h3><span class="status live">class assignment</span></div>
+        <p>An Android calculator app written in Kotlin and built in Android Studio. It was my first project in both. It has number keys, the four operations, percent, positive/negative, decimal, equals, and clear.</p>
+        <div class="tag-row"><span class="tag">Kotlin</span><span class="tag">Android Studio</span><span class="tag">Gradle</span><span class="tag">Git &amp; GitHub</span></div>
+        <video class="demo phone" controls preload="metadata" playsinline width="332" height="720" poster="media/calculator-poster.jpg">
+          <source src="media/calculator-demo.mp4" type="video/mp4">
+          Your browser cannot play this video.
+        </video>
+        <p class="muted mono demo-caption">Demo video, about 30 seconds: entering numbers and using the operation keys.</p>
+        <p class="muted mono"><a href="https://github.com/skycreated/Calculator" rel="noopener">GitHub repository</a></p>
+      </li>
+      <li class="mini">
+        <div class="project-head"><h3>Project Emmy LLM</h3><span class="status">in progress</span></div>
+        <p>A team project to find out whether large language models can fix incomplete or incorrect third-party records, translate and localize them, and spot records that already exist, with as little human work as possible. For example, finding the French title for an English movie record. We built and tested a first prototype, found it was not reliable enough, and are now building a search-based workflow and testing which record details help the models most.</p>
+        <div class="tag-row"><span class="tag">Project management</span><span class="tag">Large language models</span><span class="tag">Workflow design</span><span class="tag">Cost analysis</span></div>
+        <p>I am the project manager for a team of five working with a client. [Add what you handle, such as planning, meetings and reporting, and one problem you have helped the team solve.]</p>
+        <a class="doc-cover" href="docs/Project-Emmy-LLM-Executive-Summary.pdf" target="_blank" rel="noopener"><img src="images/emmy-summary-1.jpg" width="680" height="880" alt="First page of the Project Emmy LLM executive summary, with sections for the problem statement, proposition, next steps and conclusion" loading="lazy"></a>
+        <p class="muted mono"><a href="docs/Project-Emmy-LLM-Executive-Summary.pdf" target="_blank" rel="noopener">Read the executive summary (PDF, 2 pages)</a></p>
+      </li>
+  </ul>
+
+  <div><a class="btn" href="#home">&larr; Back to portfolio</a></div>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview" hidden>
+  <img id="lightbox-img" alt="">
+  <button type="button" class="btn" id="lightbox-close">Close</button>
+</div>
+
+<script>
+  /* Click a page preview to enlarge it. */
+  (function () {
+    var box = document.getElementById("lightbox");
+    var img = document.getElementById("lightbox-img");
+    var close = document.getElementById("lightbox-close");
+    var last = null;
+    function show(btn) {
+      var thumbImg = btn.querySelector("img");
+      img.src = btn.getAttribute("data-full");
+      img.alt = thumbImg ? thumbImg.alt : "";
+      last = btn;
+      box.hidden = false;
+      close.focus();
+    }
+    function hide() {
+      box.hidden = true;
+      img.removeAttribute("src");
+      if (last) { last.focus(); }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest ? e.target.closest(".thumb") : null;
+      if (t) { show(t); return; }
+      if (!box.hidden && (e.target === box || e.target === close || e.target === img)) { hide(); }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !box.hidden) { hide(); }
+    });
+  })();
+</script>
+
+<script>
+  /* Two views in one page: the portfolio, and the full project list at #all-projects. */
+  (function () {
+    var main = document.getElementById("main-view");
+    var all = document.getElementById("all-view");
+    function route() {
+      var showAll = window.location.hash === "#all-projects";
+      main.hidden = showAll;
+      all.hidden = !showAll;
+      if (showAll) { window.scrollTo(0, 0); return; }
+      var id = window.location.hash.slice(1);
+      var el = id ? document.getElementById(id) : null;
+      if (el) { el.scrollIntoView(); } else { window.scrollTo(0, 0); }
+    }
+    window.addEventListener("hashchange", route);
+    route();
+  })();
+</script>
+
+<script>
+  /* Typewriter greeting */
+  (function () {
+    var h1 = document.getElementById("greeting");
+    var letters = h1 ? h1.querySelectorAll(".ch") : [];
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!letters.length || reduce) return;
+
+    var cursor = document.createElement("span");
+    cursor.className = "cursor";
+    cursor.setAttribute("aria-hidden", "true");
+    h1.classList.add("typing");
+    letters[0].parentNode.insertBefore(cursor, letters[0]);
+
+    var i = 0;
+    function step() {
+      var letter = letters[i];
+      letter.classList.add("on");
+      letter.parentNode.insertBefore(cursor, letter.nextSibling);
+      i += 1;
+      if (i < letters.length) {
+        setTimeout(step, 70);
+      } else {
+        cursor.classList.add("blink");
+      }
+    }
+    setTimeout(step, 250);
+  })();
+</script>
+
+<script>
+  /* Copy helpers: try the clipboard, fall back to selecting the text so it can be copied by hand. */
+  function copyText(el, text, onDone, onSelected) {
+    function fallback() {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      onSelected();
+    }
+    try {
+      navigator.clipboard.writeText(text).then(onDone, fallback);
+    } catch (e) { fallback(); }
+  }
+
+  (function () {
+    var btn = document.getElementById("copy-email");
+    var text = document.getElementById("email-text");
+    btn.addEventListener("click", function () {
+      function reset() { setTimeout(function () { btn.textContent = "Copy"; }, 1500); }
+      copyText(text, text.textContent,
+        function () { btn.textContent = "Copied"; reset(); },
+        function () { btn.textContent = "Selected"; reset(); });
+    });
+  })();
+
+  (function () {
+    var btn = document.getElementById("copy-resume");
+    var doc = document.getElementById("resume-doc");
+    var status = document.getElementById("resume-status");
+    btn.addEventListener("click", function () {
+      function say(msg) { status.textContent = msg; setTimeout(function () { status.textContent = ""; }, 2500); }
+      copyText(doc, doc.innerText,
+        function () { say("Copied. Paste it into a document."); },
+        function () { say("Selected. Press Ctrl+C or Cmd+C to copy."); });
+    });
+  })();
+
+  /* Contact form: checks the fields. Messages are not delivered yet because the page has no mail service connected. */
+  (function () {
+    var form = document.getElementById("contact-form");
+    var status = document.getElementById("form-status");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = document.getElementById("f-name").value.trim();
+      var email = document.getElementById("f-email").value.trim();
+      var msg = document.getElementById("f-message").value.trim();
+      status.className = "";
+      if (!name || !email || !msg) {
+        status.className = "error";
+        status.textContent = "Please fill in your name, your email, and a message.";
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        status.className = "error";
+        status.textContent = "That email address looks incomplete. Check it and try again.";
+        return;
+      }
+      status.textContent = "Form check passed. This preview page cannot deliver messages yet, so please use the email address on the left.";
+    });
+  })();
+</script>
+
+</body></html>
